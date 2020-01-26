@@ -21,6 +21,3 @@ class Day1Tests(unittest.TestCase):
     ])
     def test_calculate_with_additional_fuel(self, mass, expected):
         self.assertEqual(expected, FuelCalculator.calculate_with_additional_fuel(mass))
-
-if __name__ == '__main__':
-	unittest.main()
