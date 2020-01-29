@@ -1,5 +1,9 @@
 class Computer:
-    def __init__(self, program):
+    def __init__(self, program, noun = None, verb = None):
+        if noun is not None:
+            program[1] = noun
+        if verb is not None:
+            program[2] = verb
         self.program = program
         self.reset_program_counter()
 

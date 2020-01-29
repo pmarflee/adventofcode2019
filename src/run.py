@@ -19,6 +19,7 @@ def run(title, input, runner):
 run("Day 1 Part 1:", map(int, Util.read_all_lines("../inputs/Day1.txt")), FuelCalculator.calculate_part1) 
 run("Day 1 Part 2:", map(int, Util.read_all_lines("../inputs/Day1.txt")), FuelCalculator.calculate_part2) 
 run("Day 2 Part 1:", Util.read_all_text("../inputs/Day2.txt"), Day2.calculate_part_1) 
+run("Day 2 Part 2:", Util.read_all_text("../inputs/Day2.txt"), Day2.calculate_part_2) 
 
 
 
