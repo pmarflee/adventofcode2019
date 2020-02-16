@@ -1,5 +1,5 @@
 from enum import Enum
-from util import Util
+from src.util import Util
 
 class Direction(Enum):
     UP = 1
@@ -53,13 +53,13 @@ class Day3:
         return x + offset[0], y + offset[1]
 
     @staticmethod
-    def add_item_to_grid(x, y, index, grid):
+    def add_item_to_grid(x, y, index, steps, grid):
         key = x, y
         item = grid.get(key, None)
         if item is None:
-            item = {index: index}
-        else:
-            item[index] = index
+            item = { index: steps }
+        elif index not in item:
+            item[index] = steps
         grid[key] = item
 
     @staticmethod
@@ -68,25 +68,31 @@ class Day3:
         for index, instructions in enumerate(lines, start = 1):
             x = 0
             y = 0
+            steps = 0
             for instruction in instructions:
                 for _ in range(instruction.distance):
                     x, y = Day3.get_next_position(x, y, instruction)
-                    Day3.add_item_to_grid(x, y, index, grid)
+                    steps += 1
+                    Day3.add_item_to_grid(x, y, index, steps, grid)
         return grid
         
     @staticmethod
-    def calculate_manhattan_distance(item):
-        return abs(item[0]) + abs(item[1])
-    
-    @staticmethod
-    def calculate_part_1(input):
+    def calculate(input, calculator):
         lines = Instruction.parse_list(input)
         grid = Day3.create_grid(lines)
-        best_distance = None
+        best = None
         for _, (k, v) in enumerate(grid.items()):
             if len(v) == 2:
-                current_distance = Day3.calculate_manhattan_distance(k)
-                if best_distance is None or current_distance < best_distance:
-                    best_distance = current_distance
+                current = calculator(k, v)
+                if best is None or current < best:
+                    best = current
 
-        return best_distance
+        return best
+
+    @staticmethod
+    def calculate_part_1(input):
+        return Day3.calculate(input, lambda k, _: abs(k[0]) + abs(k[1]))
+
+    @staticmethod
+    def calculate_part_2(input):
+        return Day3.calculate(input, lambda _, v: sum(v.values()))

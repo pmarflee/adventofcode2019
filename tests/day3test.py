@@ -37,3 +37,6 @@ class Day3ParserTests(unittest.TestCase):
 class Day3CalculationTests(unittest.TestCase):
     def test_calculate_part_1(self):
         self.assertEqual(self.expected_part_1, Day3.calculate_part_1(self.input))
+
+    def test_calculate_part_2(self):
+        self.assertEqual(self.expected_part_2, Day3.calculate_part_2(self.input))

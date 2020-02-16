@@ -1,5 +1,5 @@
-from util import Util
-from intcode import Computer
+from src.util import Util
+from src.intcode import Computer
 
 class Day2:
     @staticmethod
