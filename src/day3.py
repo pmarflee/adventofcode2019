@@ -21,6 +21,7 @@ class Instruction:
     @staticmethod
     def parse(input):
         first_char = input[:1]
+
         if first_char == 'U':
             direction = Direction.UP
         elif first_char == 'D':
@@ -36,9 +37,26 @@ class Instruction:
     def parse_list(input):
         return Util.parse_csv_lines_as_list(input, Instruction.parse)
 
-class Day3:
-    @staticmethod
-    def get_next_position(x, y, instruction):
+class Grid:
+    def __init__(self):
+        self.items = {}
+        self.intersections = []
+
+    def add(self, x, y, index, steps):
+        key = x, y
+        item = self.items.get(key, None)
+
+        if item is None:
+            item = { index: steps }
+        elif index not in item:
+            item[index] = steps
+
+        self.items[key] = item
+
+        if len(item) > 1:
+            self.intersections.append(key)
+
+    def get_next_position(self, x, y, instruction):
         if instruction.direction == Direction.UP:
             offset = 0, 1
         elif instruction.direction == Direction.DOWN:
@@ -52,28 +70,25 @@ class Day3:
 
         return x + offset[0], y + offset[1]
 
-    @staticmethod
-    def add_item_to_grid(x, y, index, steps, grid):
-        key = x, y
-        item = grid.get(key, None)
-        if item is None:
-            item = { index: steps }
-        elif index not in item:
-            item[index] = steps
-        grid[key] = item
+    def process_instructions(self, instructions, index):
+        x = 0
+        y = 0
+        steps = 0
 
+        for instruction in instructions:
+            for _ in range(instruction.distance):
+                x, y = self.get_next_position(x, y, instruction)
+                steps += 1
+                self.add(x, y, index, steps)
+
+class Day3:
     @staticmethod
     def create_grid(lines):
-        grid = dict()
+        grid = Grid()
+
         for index, instructions in enumerate(lines, start = 1):
-            x = 0
-            y = 0
-            steps = 0
-            for instruction in instructions:
-                for _ in range(instruction.distance):
-                    x, y = Day3.get_next_position(x, y, instruction)
-                    steps += 1
-                    Day3.add_item_to_grid(x, y, index, steps, grid)
+            grid.process_instructions(instructions, index)
+
         return grid
         
     @staticmethod
@@ -81,11 +96,12 @@ class Day3:
         lines = Instruction.parse_list(input)
         grid = Day3.create_grid(lines)
         best = None
-        for _, (k, v) in enumerate(grid.items()):
-            if len(v) == 2:
-                current = calculator(k, v)
-                if best is None or current < best:
-                    best = current
+
+        for key in grid.intersections:
+            item = grid.items[key]
+            current = calculator(key, item)
+            if best is None or current < best:
+                best = current
 
         return best
 
